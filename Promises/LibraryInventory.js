@@ -16,26 +16,22 @@ const books = {
 // elonMustBook = books.item3;
 // console.log(elonMustBook.stock);
 
-const search = (book) => {
+const search = (title, quantity) => {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      const orderItems = order.items;
-      let validOrder = orderItems.every((items) => {
-        books[item[0]].stock >= item[1];
-      });
-
+      orderArray = [title, quantity];
+      let inStock = books[orderArray[0]].stock >= orderArray[1];
       if (validOrder) {
-        resolve(`${item[0]} is in sttock`);
+        resolve(`${item[0]} is in stock`);
       } else {
         reject(
           `${item[0]} is not in stock. But here are some other books from the same author`
         );
       }
-    }, 1000);
+    }, 3000);
   });
 };
 
 myOrder = ["Elon Musk", 1];
 
 search(myOrder);
-console.log(search(myOrder));
