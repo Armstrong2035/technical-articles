@@ -14,14 +14,14 @@ The first principles for manipulating the DOM with JavaScript are as follows:
 
 This article assumes that you have a decent grasp of  HTML, CSS, and JavaScript. You know how to use the DOM, but are struggling with remembering what to do and when to do it. 
 
-### Mental model 1: Four broad categories
+### Mental model 1, Four broad categories
 When manipulating the DOM with JavaScript, there are four broad categories of things you can do. The categories are as follows: 
 - Access any element you have in your HTML or CSS.
 - Modify any element you access by assigning it a new value. 
 - Create an event handler that comes to life when that element is triggered. 
 - Create an event handler that comes to life when an event is triggered.
 
-### Variables make life easier
+### Mental model 2, Variables make life easier
 You can do without them, but using variables while navigating the dom will simplify things. Whenever you access an element that you will use more than once, it is profitable to assign it to a variable. 
 
 
@@ -43,7 +43,7 @@ The first option makes the code look a little messy. On the other hand, when we 
 
 
 
-### The order is everything
+### Mental model 3, The order is everything
 While manipulating the DOM, a lot of different keywords are chained together. It can sometimes be confusing when we just try to power our way through it. But a smarter way is to understand the order in which things typically happen in the dom. 
 
 When modifying HTML and CSS elements, the order is: 
