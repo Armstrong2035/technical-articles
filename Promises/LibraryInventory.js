@@ -4,17 +4,18 @@ const books = [
   ["Hard Drive", "James Wallace", 3],
 ];
 
-const checkAvailabilty = (title, quantity) => {
+const checkAvailability = (title, quantity) => {
   return new Promise((resolve, reject) => {
-    let available;
-    let author = "";
+    let available = false;
+    let author = " ";
 
-    for (book of books) {
-      for (detail of book) {
-        if (detail[0] === title && detail[2] >= quantity) {
-          available = true;
-          author = detail[1];
-        }
+    for (const book of books) {
+      if (book[0] === title && book[2] >= quantity) {
+        available = true;
+        author = book[1];
+        break;
+      } else if (book[0] === title) {
+        author = book[1];
       }
     }
 
@@ -32,4 +33,8 @@ const handleSuccess = (resolvedValue) => {
   console.log(resolvedValue);
 };
 
-checkAvailabilty("Elon Musk", 3).then(handleSuccess);
+const handleFailure = (rejectedValue) => {
+  console.log(rejectedValue);
+};
+
+checkAvailability("Hard Drive", 5).then(handleSuccess, handleFailure);
