@@ -1,37 +1,35 @@
-const books = {
-  item1: { title: "Steve Jobs", author: "Sir Isaac Walterson", stock: 4 },
+const books = [
+  ["Steve Jobs", "Sir Isaac Walterson", 5],
+  ["Elon Musk", "Sr Isaac Walterson", 1],
+  ["Hard Drive", "James Wallace", 3],
+];
 
-  item2: {
-    title:
-      "Hard Drive: Bill Gates and the Making of the Microsoft Empireard drive",
-    author: "James Wallace",
-    stock: 5,
-  },
-
-  item3: { title: "Elon Musk", author: "Sir Isaac Walterson", stock: 1 },
-};
-
-// steveJobsBook = books.item1;
-// billGatesBook = books.item2;
-// elonMustBook = books.item3;
-// console.log(elonMustBook.stock);
-
-const search = (title, quantity) => {
+const checkAvailabilty = (title, quantity) => {
   return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      orderArray = [title, quantity];
-      let inStock = books[orderArray[0]].stock >= orderArray[1];
-      if (validOrder) {
-        resolve(`${item[0]} is in stock`);
-      } else {
-        reject(
-          `${item[0]} is not in stock. But here are some other books from the same author`
-        );
+    let available;
+    let author = "";
+
+    for (book of books) {
+      for (detail of book) {
+        if (detail[0] === title && detail[2] >= quantity) {
+          available = true;
+          author = detail[1];
+        }
       }
-    }, 3000);
+    }
+
+    if (available) {
+      resolve(`${title} written by ${author} is available`);
+    } else {
+      reject(
+        `${title} is unavailable. But here are some other books by ${author}`
+      );
+    }
   });
 };
 
-myOrder = ["Elon Musk", 1];
+const handleSuccess = (resolvedValue) => {
+  console.log(resolvedValue);
+};
 
-search(myOrder);
+checkAvailabilty("Elon Musk", 3).then(handleSuccess);
