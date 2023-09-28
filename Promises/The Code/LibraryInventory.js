@@ -29,12 +29,12 @@ const checkAvailability = (title, quantity) => {
   });
 };
 
-const handleSuccess = (resolvedValue) => {
-  console.log(resolvedValue);
-};
+// const handleSuccess = (resolvedValue) => {
+//   console.log(resolvedValue);
+// };
 
-const handleFailure = (rejectedValue) => {
-  console.log(rejectedValue);
-};
+// const handleFailure = (rejectedValue) => {
+//   console.log(rejectedValue);
+// };
 
-checkAvailability("Hard Drive", 5).then(handleSuccess, handleFailure);
+// checkAvailability("Hard Drive", 5).then(handleSuccess, handleFailure);
