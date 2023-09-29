@@ -4,37 +4,30 @@ const books = [
   ["Hard Drive", "James Wallace", 3],
 ];
 
-const checkAvailability = (title, quantity) => {
+export const checkAvailability = (title, quantity) => {
   return new Promise((resolve, reject) => {
+    const orderArr = [title, quantity];
     let available = false;
     let author = " ";
 
     for (const book of books) {
-      if (book[0] === title && book[2] >= quantity) {
+      if (book[0] === orderArr[0] && book[2] >= orderArr[1]) {
         available = true;
         author = book[1];
         break;
-      } else if (book[0] === title) {
+      } else if (book[0] === orderArr[0]) {
         author = book[1];
       }
     }
 
     if (available) {
-      resolve(`${title} written by ${author} is available`);
+      resolve(`${orderArr[0]} written by ${orderArr[1]} is available`);
     } else {
       reject(
-        `${title} is unavailable. But here are some other books by ${author}`
+        `${orderArr[0]} is unavailable. But here are some other books by ${orderArr[1]}`
       );
     }
   });
 };
 
-// const handleSuccess = (resolvedValue) => {
-//   console.log(resolvedValue);
-// };
-
-// const handleFailure = (rejectedValue) => {
-//   console.log(rejectedValue);
-// };
-
-// checkAvailability("Hard Drive", 5).then(handleSuccess, handleFailure);
+export default books;
