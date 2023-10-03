@@ -50,8 +50,6 @@ const user = {
   bookShelf: [],
 };
 
-// Object holding an order
-
 const order = {
   title: "Steve Jobs",
   quantity: 5,
@@ -71,11 +69,10 @@ const verifyOrder = (orderObject) => {
       resolve(book);
     } else {
       console.log(`${book.title} by ${book.author} is not in stock`);
-      reject(book); //potential problem area
+      reject(book);
     }
   });
 };
-// verifyOrder(order);
 
 const checkOut = (book) => {
   return new Promise((resolve, reject) => {
@@ -84,36 +81,40 @@ const checkOut = (book) => {
     const points = order.libraryPoints;
 
     if (requiredPoints <= points) {
-      // Deduct points and update the user's libraryPoints
       order.libraryPoints -= requiredPoints;
       console.log(
         `The transaction is successful, and your library card now has ${order.libraryPoints} points`
       );
-      resolve(user.bookShelf.push([`${book.title} by ${book.author}`]));
+      resolve(user.bookShelf.push(`${book.title} by ${book.author}`));
     } else {
       reject("You don't have enough points for this transaction");
     }
   });
 };
 
-// checkOut();
+// const addToShelf = (book) => {
+//   return new Promise((resolve) => {
+//     user.bookShelf.push(`${book.title} by ${book.author}`);
+//     resolve(user.bookShelf);
+//   });
+// };
 
 const addToShelf = (book) => {
   return new Promise((resolve) => {
-    resolve(user.bookShelf.push(`${book.title} by ${book.author}`));
+    // user.bookShelf.push(`${book.title} by ${book.author}`);
+    resolve(user.bookShelf);
   });
 };
 
 const recommendBook = (orderObject) => {
   return new Promise((resolve) => {
     const orderedBook = verifyOrder(orderObject);
-    const authorToMatch = orderedBook.author; // Author of the ordered book
+    const authorToMatch = orderedBook.author;
     const recommendedBooks = [];
 
     for (const title in books) {
       const book = books[title];
       if (book.author === authorToMatch && title !== orderObject.title) {
-        // Check if the author matches and the book is not the same as the ordered book
         recommendedBooks.push(book.title);
       }
     }
@@ -127,8 +128,6 @@ verifyOrder(order)
   .then(addToShelf)
   .then((updatedBookShelf) => {
     console.log(
-      `Your book has been added to the bookShelf ${updatedBookShelf}`
+      `Your book has been added to the bookShelf: ${updatedBookShelf}`
     );
   });
-
-console.log(user.bookShelf);
