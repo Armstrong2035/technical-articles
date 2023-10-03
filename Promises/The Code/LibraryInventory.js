@@ -58,46 +58,77 @@ const order = {
   libraryPoints: 10,
 };
 
-// Rewrite all functions first without promises
-// 1. Create a user object. /
-// 2. Let book array deduct points
-// 3. Check the availability of a book /
-// 4. If book is available, check if user has enough points in library card. Chain this function with check availability
-// 5. Everything checks out, deduct points from library carrd, and store book inside user.shelf
-// 6. if Step 3 fails, suggest other books by the same author
-// Mark the end of each function / bracket so it is easy to nest it insisde its corresponding promise
-
 const verifyOrder = (orderObject) => {
-  let book = null;
-  const title = orderObject.title;
-  const quantity = orderObject.quantity;
-  if (books.hasOwnProperty(title)) {
-    book = books[title];
-  }
-  if (book.quantityInStock >= quantity) {
-    console.log(`${book.title} by ${book.author} is in stock`);
-  } else {
-    console.log(`${book.title} by ${book.author} is not in stock`);
-  }
-};
-verifyOrder(order);
-
-const checkOut = (orderObject) => {
-  const title = orderObject.title;
-  const points = orderObject.libraryPoints;
-
-  if (books.hasOwnProperty(title)) {
-    const book = books[title];
-    if (book.libraryPointsRequired <= points) {
-      // Deduct points and update the user's libraryPoints
-      orderObject.libraryPoints -= book.libraryPointsRequired;
-      return `The transaction is successful, and your library card now has ${orderObject.libraryPoints} points`;
-    } else {
-      return "You don't have enough points";
+  return new Promise((resolve, reject) => {
+    let book = null;
+    const title = orderObject.title;
+    const quantity = orderObject.quantity;
+    if (books.hasOwnProperty(title)) {
+      book = books[title];
     }
-  } else {
-    return "The book is not available in the catalog";
-  }
+    if (book.quantityInStock >= quantity) {
+      console.log(`${book.title} by ${book.author} is in stock`);
+      resolve(book);
+    } else {
+      console.log(`${book.title} by ${book.author} is not in stock`);
+      reject(book); //potential problem area
+    }
+  });
+};
+// verifyOrder(order);
+
+const checkOut = (book) => {
+  return new Promise((resolve, reject) => {
+    const requiredPoints = book.libraryPointsRequired;
+    const title = book.title;
+    const points = order.libraryPoints;
+
+    if (requiredPoints <= points) {
+      // Deduct points and update the user's libraryPoints
+      order.libraryPoints -= requiredPoints;
+      console.log(
+        `The transaction is successful, and your library card now has ${order.libraryPoints} points`
+      );
+      resolve(user.bookShelf.push([`${book.title} by ${book.author}`]));
+    } else {
+      reject("You don't have enough points for this transaction");
+    }
+  });
 };
 
-console.log(checkOut(order));
+// checkOut();
+
+const addToShelf = (book) => {
+  return new Promise((resolve) => {
+    resolve(user.bookShelf.push(`${book.title} by ${book.author}`));
+  });
+};
+
+const recommendBook = (orderObject) => {
+  return new Promise((resolve) => {
+    const orderedBook = verifyOrder(orderObject);
+    const authorToMatch = orderedBook.author; // Author of the ordered book
+    const recommendedBooks = [];
+
+    for (const title in books) {
+      const book = books[title];
+      if (book.author === authorToMatch && title !== orderObject.title) {
+        // Check if the author matches and the book is not the same as the ordered book
+        recommendedBooks.push(book.title);
+      }
+    }
+
+    resolve(recommendedBooks);
+  });
+};
+
+verifyOrder(order)
+  .then(checkOut)
+  .then(addToShelf)
+  .then((updatedBookShelf) => {
+    console.log(
+      `Your book has been added to the bookShelf ${updatedBookShelf}`
+    );
+  });
+
+console.log(user.bookShelf);
