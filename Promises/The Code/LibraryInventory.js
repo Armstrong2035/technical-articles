@@ -50,12 +50,6 @@ const user = {
   bookShelf: [],
 };
 
-const order = {
-  title: "Steve Jobs",
-  quantity: 5,
-  libraryPoints: 10,
-};
-
 const verifyOrder = (orderObject) => {
   return new Promise((resolve, reject) => {
     let book = null;
@@ -106,21 +100,26 @@ const addToShelf = (book) => {
   });
 };
 
-const recommendBook = (orderObject) => {
+const recommendBook = (book) => {
   return new Promise((resolve) => {
-    const orderedBook = verifyOrder(orderObject);
-    const authorToMatch = orderedBook.author;
+    const authorToMatch = book.author; // Use the author from the provided book
     const recommendedBooks = [];
 
     for (const title in books) {
-      const book = books[title];
-      if (book.author === authorToMatch && title !== orderObject.title) {
-        recommendedBooks.push(book.title);
+      const bookItem = books[title];
+      if (bookItem.author === authorToMatch && title !== book.title) {
+        recommendedBooks.push(bookItem.title);
       }
     }
 
     resolve(recommendedBooks);
   });
+};
+
+const order = {
+  title: "Steve Jobs",
+  quantity: 6,
+  libraryPoints: 10,
 };
 
 verifyOrder(order)
@@ -129,5 +128,10 @@ verifyOrder(order)
   .then((updatedBookShelf) => {
     console.log(
       `Your book has been added to the bookShelf: ${updatedBookShelf}`
+    );
+  })
+  .catch((recommendBook) => {
+    console.log(
+      `We don't have the book you wanted, but here are some other books from the same author: ${recommendedBooks}`
     );
   });
