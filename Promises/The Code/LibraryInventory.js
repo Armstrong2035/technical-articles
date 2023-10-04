@@ -41,6 +41,13 @@ const books = {
     quantityInStock: 5,
     libraryPointsRequired: 2,
   },
+
+  Artemis: {
+    title: "Artemis",
+    author: "Andy Weir",
+    quantityInStock: 2,
+    libraryPointsRequired: 2,
+  },
 };
 
 // Object holding a user profile
@@ -86,13 +93,6 @@ const checkOut = (book) => {
   });
 };
 
-// const addToShelf = (book) => {
-//   return new Promise((resolve) => {
-//     user.bookShelf.push(`${book.title} by ${book.author}`);
-//     resolve(user.bookShelf);
-//   });
-// };
-
 const addToShelf = (book) => {
   return new Promise((resolve) => {
     // user.bookShelf.push(`${book.title} by ${book.author}`);
@@ -111,14 +111,16 @@ const recommendBook = (book) => {
         recommendedBooks.push(bookItem.title);
       }
     }
-
+    console.log(
+      `We don't have the book you wanted, but here are some other books from the same author: ${recommendedBooks}`
+    );
     resolve(recommendedBooks);
   });
 };
 
 const order = {
-  title: "Steve Jobs",
-  quantity: 6,
+  title: "The Innovators",
+  quantity: 3,
   libraryPoints: 10,
 };
 
@@ -130,8 +132,4 @@ verifyOrder(order)
       `Your book has been added to the bookShelf: ${updatedBookShelf}`
     );
   })
-  .catch((recommendBook) => {
-    console.log(
-      `We don't have the book you wanted, but here are some other books from the same author: ${recommendedBooks}`
-    );
-  });
+  .catch(recommendBook);
