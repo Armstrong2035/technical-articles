@@ -62,45 +62,82 @@ Let us break it down:
 ```js
 //Create a database of books
 
-const books = [
-  ["Steve Jobs", "Sir Isaac Walterson", 5],
-  ["Elon Musk", "Sr Isaac Walterson", 1],
-  ["Hard Drive", "James Wallace", 3],
-];
+const books = {
+  "Steve Jobs": {
+    title: "Steve Jobs",
+    author: "Walter Isaacson",
+    quantityInStock: 5,
+    libraryPointsRequired: 2,
+  },
+  "Elon Musk": {
+    title: "Elon Musk",
+    author: "Walter Isaacson",
+    quantityInStock: 1,
+    libraryPointsRequired: 2,
+  },
+  "Hard Drive": {
+    title: "Hard Drive",
+    author: "James Wallace",
+    quantityInStock: 3,
+    libraryPointsRequired: 2,
+  },
+  "The Innovators": {
+    title: "The Innovators",
+    author: "Walter Isaacson",
+    quantityInStock: 4,
+    libraryPointsRequired: 2,
+  },
+  "Einstein: His Life and Universe": {
+    title: "Einstein: His Life and Universe",
+    author: "Walter Isaacson",
+    quantityInStock: 2,
+    libraryPointsRequired: 2,
+  },
+  "The Code Breaker": {
+    title: "The Code Breaker",
+    author: "Walter Isaacson",
+    quantityInStock: 1,
+    libraryPointsRequired: 2,
+  },
+  "The Martian": {
+    title: "The Martian",
+    author: "Andy Weir",
+    quantityInStock: 5,
+    libraryPointsRequired: 2,
+  },
+
+  Artemis: {
+    title: "Artemis",
+    author: "Andy Weir",
+    quantityInStock: 2,
+    libraryPointsRequired: 2,
+  },
+};
 
 // Write a function that checks if a book is in stock
 
-const checkAvailability = (title, quantity) => {
-  // Let checkAvailablity return an instance of an anonymous promise
-
+const verifyOrder = (orderObject) => {
   return new Promise((resolve, reject) => {
-    let available = false;
-    let author = " ";
-
-    for (const book of books) {
-      if (book[0] === title && book[2] >= quantity) {
-        available = true;
-        author = book[1];
-        break;
-      } else if (book[0] === title) {
-        author = book[1];
-      }
+    let book = null;
+    const title = orderObject.title;
+    const quantity = orderObject.quantity;
+    if (books.hasOwnProperty(title)) {
+      book = books[title];
     }
-
-    if (available) {
-      resolve(`${title} written by ${author} is available`);
+    if (book.quantityInStock >= quantity) {
+      console.log(`${book.title} by ${book.author} is in stock`);
+      resolve(book);
     } else {
-      reject(
-        `${title} is unavailable. But here are some other books by ${author}`
-      );
+      console.log(`${book.title} by ${book.author} is not in stock`);
+      reject(book);
     }
   });
 };
 ```
 
-One thing that standsout in this example is that the executor function is nexted inside another function. That is because an executor function can be used as a callback function! This convention is convenient for instantiating the promise within a function. Now, we can simply call checkAvailablity, and depending on the availability of a book, it wille either resolve, or return value.
+One thing that standsout in this example is that the executor function is nexted inside another function. That is because an executor function can be used as a callback function! This convention is convenient for instantiating the promise within a function. Now, we can simply call verifyOrder, and depending on the availability of a book, it will either send a resolved value, or a reason for rejection.
 
-But what happens after checkAvailability has run? Do we want to log the resolve/reject value to the console? Do we want to do something else? What do we do after a promise is resolved or rejected?
+But what happens after verifyOrder has run? Do we want to log the resolve/reject value to the console? Do we want to do something else? What do we do after a promise is resolved or rejected?
 
 ### Handling success and failure with .then()
 
@@ -117,7 +154,7 @@ const handleFailure = (rejectedValue) => {
   console.log(rejectedValue);
 };
 
-checkAvailability("Hard Drive", 5).then(handleSuccess, handleFailure);
+verifyorder("Hard Drive", 5).then(handleSuccess, handleFailure);
 ```
 
 1. handleSuccess(): is a callback function takes a single arguement **resolvedValue**. In case of success, this function logs whatever is in resolved() to the console.
