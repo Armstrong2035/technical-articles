@@ -86,19 +86,19 @@ const checkOut = (book) => {
       console.log(
         `The transaction is successful, and your library card now has ${order.libraryPoints} points`
       );
-      resolve(user.bookShelf.push(`${book.title} by ${book.author}`));
+      // resolve(user.bookShelf.push(`${book.title} by ${book.author}`)); 
     } else {
       reject("You don't have enough points for this transaction");
     }
-  });
+    });
 };
 
-const addToShelf = (book) => {
-  return new Promise((resolve) => {
-    // user.bookShelf.push(`${book.title} by ${book.author}`);
-    resolve(user.bookShelf);
-  });
-};
+// const addToShelf = (book) => {
+//   return new Promise((resolve) => {
+//     // user.bookShelf.push(`${book.title} by ${book.author}`);
+//     resolve(user.bookShelf);
+//   });
+// };
 
 const recommendBook = (book) => {
   return new Promise((resolve) => {
@@ -106,7 +106,7 @@ const recommendBook = (book) => {
     const recommendedBooks = [];
 
     for (const title in books) {
-      const bookItem = books[title];
+         const bookItem = books[title];
       if (bookItem.author === authorToMatch && title !== book.title) {
         recommendedBooks.push(bookItem.title);
       }
@@ -126,10 +126,12 @@ const order = {
 
 verifyOrder(order)
   .then(checkOut)
-  .then(addToShelf)
   .then((updatedBookShelf) => {
     console.log(
       `Your book has been added to the bookShelf: ${updatedBookShelf}`
     );
   })
   .catch(recommendBook);
+
+
+  console.log(user)

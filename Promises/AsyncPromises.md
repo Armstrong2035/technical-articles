@@ -1,7 +1,8 @@
 ## Introduction
 
 Modern web development requires asynchronicity. Sometimes, a function needs to run only if a prior function is successful. At other times, multiple tasks within an application must occur simultaneously.
-While some programming languages are **multi-threaded** - capable of handling asynchronous (async) operations naturally, JavaScript is a **single-threaded** language. It necessitates special tools to manage async use-cases, and one of these tools is a Promise.
+
+While some programming languages are **multi-threaded** i.e capable of handling asynchronous (async) operations naturally, JavaScript is a **single-threaded** language. JavaScript therefore provides special tools to manage async use-cases, and one of these tools is a Promise.
 
 This article will cover the following topics:
 
@@ -9,8 +10,6 @@ This article will cover the following topics:
 - Constructing a JavaScript Promise
 - Handling the success or failure of a Promise
 - Chaining multiple Promises together
-- Running Concurrent Promises
-- Common Mistakes when Writing Promises
 
 To make the most of this article, readers should have a fundamental understanding of JavaScript concepts.
 
@@ -26,13 +25,13 @@ The state of a Promise reflects the progress of the asynchronous operation:
 - **Resolved**: (the operation is succesful)
 - **Rejected**: (the operation has failed)
 
-It's important to note that the failure of a Promise doesn't always indicate bad code. Failure can be due to external conditions not met, or explicit error handling within the code.
+Please note that the failure of a Promise doesn't always indicate bad code. Failure can be due to external conditions not met, or explicit error handling within the code.
 
-For example, the user of a digital library has picked a book that is not available. Based on the constructor, the promise may be rejected. The failure of this operation is not due to low inventory, not bad code. But this condition must be explicitely stated in the promise constructor.
+For example, the user of a digital library has picked a book that is not available. Based on the constructor, the promise may be rejected. The failure of this operation is due to low inventory, not bad code. Yet this condition must be explicitely stated in the promise constructor.
 
 ### Constructing a promise object
 
-The Promise constructor method takes the executor function. The executor function is triggered whenever the promise is called.
+The Promise constructor method uses what is known as an **executor function**. An executor function is simple a function that returns either a resolved, or a rejected value. In most cases, this function will return both values depending on the conditions set by the developer.
 
 The syntax for constructing a promise is as follows:
 
@@ -50,9 +49,25 @@ const executorFunction = (resolve, reject) => {
 const newPromise = new Promise(executorFunction)
 ```
 
+We could also use the convention of nesting a promise constructor inside a regular function. Like so:
+
+```pseudo
+const regularFunction = (argument) => {
+  return new Promise ((resolve, reject) => {
+    if(condition){
+        resolve('This promise is succesful')
+    }
+    else {
+        reject('This promise has failed')
+    }
+  })
+}
+
+```
+
 Let us break it down:
 
-1. (resolve, reject): resolve() and reject() are functions that are built into the promise constructor. They handle cases of success, or failure
+1. (resolve, reject): resolve and reject are functions that are built into the promise constructor. They handle cases of success, or failure
 2. body: the executor function body
 3. if, else: if a condition is met, resolve() is triggered. Otherwise, reject() is triggered.
 4. new Promise(): a promise is an object, and needs to be instantiated.
@@ -114,6 +129,13 @@ const books = {
   },
 };
 
+// Object holding a user profile
+
+const user = {
+  name: "Armstrong Olusoji",
+  bookShelf: [],
+};
+
 // Write a function that checks if a book is in stock
 
 const verifyOrder = (orderObject) => {
@@ -135,7 +157,7 @@ const verifyOrder = (orderObject) => {
 };
 ```
 
-One thing that standsout in this example is that the executor function is nexted inside another function. That is because an executor function can be used as a callback function! This convention is convenient for instantiating the promise within a function. Now, we can simply call verifyOrder, and depending on the availability of a book, it will either send a resolved value, or a reason for rejection.
+Now, we can simply call verifyOrder, and depending on the availability of a book, it will either send a resolved value, or a reason for rejection.
 
 But what happens after verifyOrder has run? Do we want to log the resolve/reject value to the console? Do we want to do something else? What do we do after a promise is resolved or rejected?
 
@@ -143,7 +165,7 @@ But what happens after verifyOrder has run? Do we want to log the resolve/reject
 
 The resolve / reject value can be resolved simply by passing a callback function into .then()
 
-Let us test this with our checkAvaibability function:
+Let us test this with our verifyOrder function:
 
 ```js
 const handleSuccess = (resolvedValue) => {
@@ -157,12 +179,12 @@ const handleFailure = (rejectedValue) => {
 verifyorder("Hard Drive", 5).then(handleSuccess, handleFailure);
 ```
 
-1. handleSuccess(): is a callback function takes a single arguement **resolvedValue**. In case of success, this function logs whatever is in resolved() to the console.
-2. handleFailure(): is a callback function that receives a single argument **rejectedValue**. In case of failure, this function logs whatever is in rejected() to the concole.
-3. .then(): receives two callback functions. The first callback is triggerd if the promise is succesful. The second callback is triggered if the promise fails.
-4. If 5 copies of Hard Drive are in stock, handleSuccess will execute. Otherwuise, handleFalure will execute.
+1. handleSuccess(): is a callback function takes a single arguement **resolvedValue**. In case of success, this function logs the resolved value to the console.
+2. handleFailure(): is a callback function that receives a single argument **rejectedValue**. In case of failure, this function logs logs the rejected value to the console.
+3. .then(): receives two callback functions as arguement. The first argument is triggerd if the promise is succesful. The second arguement is triggered if the promise fails.
+4. If verifyOrder succeeds, handleSuccess will execute. Otherwise, handleFailure will execute.
 
-> Do you notice that we only referenced checkAvailability when we add .then? Why hav we not referenced checkAvilability in either of the success or failure callback functions? That is because once we attach .then() to any promise, resolved() / rejected() are automatically passed to resolvedValue and rejectedValue.
+> Please note, once you add .then() to any promise, the promise's resolved and rejected values are automatically passed to the corresponding callback function.
 
 But there are other ways to use the success / failure callback functions.
 
@@ -194,6 +216,88 @@ checkAvailability("Hard Drive", 5).then(handleSuccess).catch(handleFailure);
 
 This method is similar to the 2nd method. The only difference is that we use .catch() to handle failure rather than a second .then()
 
-Either of these three methods will simply send the resolve / reject value from checkAvailability to the respective callback functions. But what if depending on the availability of a book, we want to either execute a checkout function, or something else? Let us talk about chaining promises.
+Either of these three methods will simply send the resolve / reject value from verifyOrder to the respective callback functions.
+
+But what if depending on the availability of a book, we want to trigger a new function? Let us talk about chaining promises.
 
 ### Chaining Promises / Promise Composition
+
+In the previous exercise, we created a promise named **verifyOrder**. This promise checks if the book a customer wants is in stock. If it is in stock, the promise is rresolved, and or success handler is triggered. Otherwise, the failure handler will execute.
+
+But what happens after that?
+
+Well, if we verify that a book is available, we want to add that book to the user's bookshelf. But if it is not, we want to recommend other books from the same author.
+
+Promise composition enable us to connect promises with one another. In our example, a fulfiled verifyOrder promise will trigger the checkOut Promise. If checkOut is succesful, the addToShelf promise will be triggered. A rejected verifyOrder promise will trigger the recommendBook promise. Let us see this in practice.
+
+First, we create a **checkOut** function to handle check out. It should check the object **order**'s **libraryPoints**. If there are enough library points, the promise should deduct the required points from libraryPoints, and then add the titlein that order to the user's bookShelf. Otherwise it should be rejected.
+
+```js
+const order = {
+  title: "The Innovators",
+  quantity: 3,
+  libraryPoints: 10,
+};
+
+const checkOut = (book) => {
+  return new Promise((resolve, reject) => {
+    const requiredPoints = book.libraryPointsRequired;
+    const title = book.title;
+    const points = order.libraryPoints;
+
+    if (requiredPoints <= points) {
+      order.libraryPoints -= requiredPoints;
+      console.log(
+        `The transaction is successful, and your library card now has ${order.libraryPoints} points`
+      );
+      resolve(user.bookShelf.push(`${book.title} by ${book.author}`));
+    } else {
+      reject("You don't have enough points for this transaction");
+    }
+  });
+};
+```
+
+Finally, we will add a new promise called **recommendBook**. If **verifyOrder** fails, recommendBook will highlight other books from the same author.
+
+```js
+const recommendBook = (book) => {
+  return new Promise((resolve) => {
+    const authorToMatch = book.author; // Use the author from the provided book
+    const recommendedBooks = [];
+
+    for (const title in books) {
+      const bookItem = books[title];
+      if (bookItem.author === authorToMatch && title !== book.title) {
+        recommendedBooks.push(bookItem.title);
+      }
+    }
+    console.log(
+      `We don't have the book you wanted, but here are some other books from the same author: ${recommendedBooks}`
+    );
+    resolve(recommendedBooks);
+  });
+};
+```
+
+Finally, let us chain all these newly created promises together.
+
+```js
+verifyOrder(order)
+  .then(checkOut)
+  .then((updatedBookShelf) => {
+    console.log(
+      `Your book has been added to the bookShelf: ${updatedBookShelf}`
+    );
+  })
+  .catch(recommendBook);
+```
+
+A breakdown of what is happening here is as follows:
+
+1. We call verifyOrder with the argument order
+2. If the verifyOrder promise resolves then checkOut should execute
+3. If checkOut succeeds, we chain an anonymous function to log the value of return value of checkOut. Something to note here is that .then automatically appends the return value of the previous promise as an arguement of the current promise.
+4. Finally, we use .catch incase verifyOrder fails.
+
+That is probably alot to take in. So let us discuss one final thing - best practices for using promises.
