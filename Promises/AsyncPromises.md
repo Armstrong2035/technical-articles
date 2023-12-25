@@ -1,17 +1,17 @@
 ## Introduction
 
-Modern web development requires asynchronicity. Sometimes, a function needs to run only if a prior function is successful. At other times, multiple tasks within an application must occur simultaneously.
+Modern web development requires _asynchronicity_. Sometimes, a function needs to run only if a prior function is successful. At other times, multiple tasks within an application must occur simultaneously. These kinds of functions are called asynchronous operations.
 
-While some programming languages are **multi-threaded** i.e capable of handling asynchronous (async) operations naturally, JavaScript is a **single-threaded** language. JavaScript therefore provides special tools to manage async use-cases, and one of these tools is a Promise.
+Programming languages such as Java and the C family are **multi-threaded**. This means that they capable of handling asynchronous (async) operations naturally. JavaScript on the otherhand is a **single-threaded** language. Special functions are therefore needed to manage asynchronous operations in JavaScript. Some of these functions include **fetch API**, _async / await_, and _Promises_. In this article, we discuss Promises.
 
 This article will cover the following topics:
 
 - Defining JavaScript Promises
-- Constructing a JavaScript Promise
+- Constructing a Promise
 - Handling the success or failure of a Promise
 - Chaining multiple Promises together
 
-To make the most of this article, readers should have a fundamental understanding of JavaScript concepts.
+To get the most out of this article, readers should understand the fundementals of JavaScript.
 
 ### What is a Promise?
 
