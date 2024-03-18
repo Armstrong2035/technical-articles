@@ -35,7 +35,7 @@ The Promise constructor method uses what is known as an **executor function**. A
 
 The syntax for constructing a promise is as follows:
 
-```pseudo
+```js
 const executorFunction = (resolve, reject) => {
     //function body
 
@@ -51,7 +51,7 @@ const newPromise = new Promise(executorFunction)
 
 We could also use the convention of nesting a promise constructor inside a regular function. Like so:
 
-```pseudo
+```js
 const regularFunction = (argument) => {
   return new Promise ((resolve, reject) => {
     if(condition){
