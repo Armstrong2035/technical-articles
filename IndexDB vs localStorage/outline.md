@@ -30,10 +30,22 @@ This section explores the nunces of storage sizes in both tools.
 
 IDB is complex whereas LS is simple. This section explores how this impacts developers
 
-### Browser support
+### Cross platform compatbility
 
-This section explores how both tools interract with browsers.
+This section explores how both tools interract with browsers, mobile devices, and other platforms where an app might be deployed
 
-### Use cases
+### Security
 
-This section is the conclusing section and uses all we know to recommend ideal use cases for both tools.
+Since both tools deal with Data, security is of utmost importance. This section covers the security capabilities of both tools.
+
+### Offline capability
+
+This section covers the performance of both tools as regards offline access, data sychronization and progressive webapps
+
+### Development tools and packages
+
+IDB and LS have tools and packages that enhance the development experience. This section gives an overview of some of the most widely used.
+
+### Case studies and examples
+
+This section is the concluding section and uses all we know to recommend ideal use cases for both tools.
