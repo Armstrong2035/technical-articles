@@ -1,13 +1,3 @@
-## Outline
-
-1. Introduction (done)
-2. What is a layout (1 parargaph)
-3. MUI Grid
-4. MUI media queries
-5. SX for custom CSS declearations
-6. Componenents with built in, immutable values
-7. Conclusion
-
 # Introduction
 
 One of the issues people have with using a component library is the semi-mutabvle / immutable nature of the components. For example, any given Material UI (MUI) component has preset variants that limit a developer's ability to customzie it. This creates the impresion that Material UI can only be used to build a relatively simple layout, and that tradeoffs will have to be made. This concern is however mostly unfounded because MUI has features that can handle complex layouts. It also allows users to write custom CSS declearations.
@@ -94,7 +84,7 @@ The **grid container** is the starting point of our layout design. Whatever is n
 
 (Question: how much information is too much? Should I explain deeper here?)
 
-These are just the basics of Grid. You can learn more about these prperties in the official documentation. For now, let is build the layout we set out to build.
+These are just the basics of Grid. You can learn more about these properties in the official documentation. For now, let is build the layout we set out to build. Now, let us put these and more to use.
 
 ## Building the layout
 
@@ -104,28 +94,97 @@ The first thing we notice about this layout is that there are three major sectio
 
 - Navigation section at the top which cuts across the full width of the page. This part is labelled 1
 - Beneath the Navigation is the body which contains two main sections
+
   - Section on the left containing a _slideshow_. This section is labelled 2.
   - Section on the right containing a _music player_. This section is labelled 3.
     - Nested inside the music player is the _audio controller_. This sub section is labelled 4.
     - Nested inside the music player is a _playlist_. This sub section is labelled 5.
 
+> As you read the code, and the reasons for some of the choices, please follow along with code of your own. And feel free to do things differently if you believe you have a better solution.
+
+### Setting the canvas
+
 ```jsx
 import React from "react";
-import { Container, Grid, Stack } from "@mui/material";
+import { Grid } from "@mui/material";
 
 export default function ComplexLayout() {
   return (
-    <Container>
-      <Grid container className={"navigation"}></Grid>
+    // Main div for the entire page, setting background color
+    <div style={{ backgroundColor: "#212121" }}>
+      {/* App bar for navigation or header */}
+      <AppBar position="static" sx={{ backgroundColor: "#111111" }}>
+        <Toolbar></Toolbar>
+      </AppBar>
 
-      <Grid container className={"body"}></Grid>
-    </Container>
+      {/* Main body div */}
+      <div className="body" style={{ padding: "10px", height: "100vh" }}>
+        {/* Grid container with items in a row */}
+        <Grid container direction={"row"} spacing={1}>
+          {/* Grid item for slideshow, taking 3 columns on large screens */}
+          <Grid className="slideshow" item lg={3}></Grid>
+          {/* Grid item for music player, taking 9 columns on large screens */}
+          <Grid className="musicplayer" item lg={9}></Grid>
+        </Grid>
+      </div>
+    </div>
   );
 }
 ```
 
-We first outline the navigation and the body with the Stack component. It is a layout component that stacks two elements on top of one another.
+To set the canvas, we do the following:
 
-Inside the Stack component, we put two Grid Containers. The first Grid container is the navigation section. The second Grid container is the body.
+1. Create a div as the main canavs for the entire page. We set its background color using the **style** prop. The style prop is used in MUI to add **custom CSS** to **non MUI components**. If div was a MUI component, we would replace style with **SX**
+2. Add a header / nav bar using MUI components **AppBar** and **ToolBar**. But since the navbar is not part of the focus for this guide, we don't add anything to this.
+3. Nested inside our main Div, we add another div whose **className** is _body_.
+4. Set the padding of _body_ to _10px_. We also want the _body_ to take the height of the entire screen, so we set its height to _100VH (viewport height)_. The reason for this will become apparent.
+5. Create a Grid container whose items are arranged in a row.
+6. Our Grid container has two grid items. The items are _slideshow_ and _musicplayer_
+7. Set the width of slideshow to take 3 columns on a large screen, and musicplayer to take 9 columns on a large screen.
 
-The next thing we will do is to start to populate each of these Grid containers with grid items of their own.
+> Note: Grid items and containers change their height based on the content we put inside of them.
+
+### Building Slideshow
+
+Here's the code for grid item slideshow
+
+```jsx
+<Grid className="slideshow" item lg={3}>
+  {/* Create a Box component with a black background and height set to 100% */}
+  <Box sx={{ backgroundColor: "#000000", height: "100%" }}>
+    {/* Stack with items aligned to the center */}
+    <Stack alignItems={"center"}>
+      {/* Box component to contain the image with a top margin */}
+      <Box sx={{ marginTop: "10px" }}>
+        {/* Image with custom styles */}
+        <img
+          src={inthemix} // Assuming 'inthemix' is a variable holding the image source
+          style={{ objectFit: "contain", maxWidth: "300px" }} // Custom image styles
+        />
+      </Box>
+
+      {/* Typography component for the title with white color and left margin */}
+      <Typography variant={"h5"} sx={{ color: "white", marginLeft: "10px" }}>
+        Soul Jazz Records mixtape radio show
+      </Typography>
+
+      {/* Button component for 'Read more' with text variant and positioned to the right */}
+      <Button variant={"text"} sx={{ right: "108px" }}>
+        Read more
+      </Button>
+    </Stack>
+  </Box>
+</Grid>
+```
+
+Inside the grid item slideshow, we do the following:
+
+1. Create a Box component. We set its background color, and _height to 100%_.
+
+   - Go back to item 7 of the previous section in this article. Note that we set the width of this grid item using breakpoints (lg={3}). However, there is no equivalent way to set the height using breakpoints. So here, we set the Box component's height to 100% of the div named body. Since grid containers and grid items change their height beased on the content in the content, giving the Box container the 100% height automatically sets the height of the grid item. However for this to work, we must explicitely state the height of the parent component, otherwise the value _height:'100%'_ will not have a reference point. In this case, the reference point is _height: '100vh'_ from the body div.
+
+2. Nest the following components inside box:
+   - Stack with items aligned to the center. This Stack component groups the following components
+     - A Box component that acts as a container for an image. We set a maximum width for the image, and ensure that it stays within that box with the contain rule.
+     - A Typography component with a single sentence. We use the **marginLeft** rule to ensure that the text aligns properly with its sibling components.
+     - A button. We use the **right** property to ensure that the button aligns property with its sibling components.
