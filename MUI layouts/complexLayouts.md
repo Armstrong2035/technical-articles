@@ -144,7 +144,7 @@ To set the canvas, we do the following:
 
 > Note: Grid items and containers change their height based on the content we put inside of them.
 
-### Building Slideshow
+### Grid Item (Slideshow)
 
 Here's the code for grid item slideshow
 
@@ -188,3 +188,230 @@ Inside the grid item slideshow, we do the following:
      - A Box component that acts as a container for an image. We set a maximum width for the image, and ensure that it stays within that box with the contain rule.
      - A Typography component with a single sentence. We use the **marginLeft** rule to ensure that the text aligns properly with its sibling components.
      - A button. We use the **right** property to ensure that the button aligns property with its sibling components.
+
+All of this makes up the slideshow grid item. But there is a second major grid item to consider - music player.
+
+### Grid Item (musicplayer)
+
+The music player section of the body is more complex than slideshow. While slideshow arranges an image, a sentence, and a button on one line - music player has two major elements. These elements are as follows:
+
+1. The Album which has the following elements:
+   - An album cover
+   - Album details:
+     - Album description
+     - Tracks player
+     - Product details:
+       - Product type
+       - Serial number
+       - Inventory status
+       - Price
+       - Favourite button
+       - Add to cart button
+2. The Playlist, which is an array of album covers.
+
+Here's how we set the structure:
+
+```jsx
+<Grid className="musicplayer" item lg={9}>
+  {/* Grid container for the music player */}
+  <Grid container spacing={1}>
+    {/* Grid item for the record player */}
+    <Grid item className="recordplayer"></Grid>
+
+    {/* Grid item for the playlist */}
+    <Grid item className="playlist" sx={{ overflow: "hidden" }}>
+      {/* The 'overflow' property is set to 'hidden' to handle overflow content */}
+    </Grid>
+  </Grid>
+</Grid>
+```
+
+Musicplayer as a grid item of the overarching grid container takes up 9 columns in width. This was defined earlier in our code. However, the volume and diversity of the content inside this grid item makes it neccesary to create a nested grid container inside of it. To that effect, we do the following:
+
+1. Create a grid container inside musicplayer.
+2. Create two grid items inside our nested grid container namely record player and playlist.
+
+#### Building record player
+
+```jsx
+<Grid item className="recordplayer">
+  {/* Grid container for the song details */}
+  <Grid container spacing={1}>
+    {/* Grid item for the song image */}
+    <Grid
+      item
+      className={"albumcover"}
+      lg={6}
+      sx={{ minHeight: "470px" }}
+    ></Grid>
+    {/* Grid item for the song information */}
+    <Grid
+      item
+      className={"albumdetails"}
+      lg={6}
+      sx={{ minHeight: "470px" }}
+    ></Grid>
+  </Grid>
+</Grid>
+```
+
+Record player is a grid item, which has two large visual elements. So we do the following:
+
+1. Nest yet another grid container inside it.
+2. Create two grid items inside this container namely albumcover, and albumdetails
+3. Both grid items covers 6/12 grid columns.
+4. We set the minimum height of album cover to _470px_. While we want albumdetails to have the same height, we do not state that yet.
+
+```jsx
+<Grid item className={"albumcover"} lg={6} sx={{ minHeight: "470px" }}>
+  <img src={souljazzrecords} style={{ height: "100%" }} />
+</Grid>
+```
+
+Album Cover is fairly simple. We put an image inside it, and ensure that the image matches 100% of its parent. Next, let us build Album details.
+
+```jsx
+<Grid item className={"albumdetails"} lg={6} sx={{ minHeight: "470px" }}>
+  {/* Card for displaying album details */}
+  <Card sx={{ backgroundColor: "#000000" }}>
+    {/* Stack to vertically stack card content */}
+    <Stack spacing={2}>
+      {/* Card content */}
+      <CardContent></CardContent>
+
+      {/* Container for additional content */}
+      <Container></Container>
+    </Stack>
+  </Card>
+</Grid>
+```
+
+Album details nests a single Card component. However, inside the Card, there are a few elements:
+
+- A Stack component, inside which we vertical nest the card content.
+- A Container inside which we nest the album details.
+- Another Container that nests an array of tracks with media control. This part has intentionally been left out for you to add. You can view the original project at https://soundsoftheuniverse.com/sjr
+
+Let us work more on the Stack component, and then the Container.
+
+```jsx
+<Stack spacing={2}>
+  <CardContent>
+    <Typography variant={"h5"} sx={{ color: "white" }}>
+      Punk 45: There Is No Such Thing As Society (2024 edition)
+    </Typography>
+    <Typography variant={"h4"} sx={{ color: "orange" }}>
+      Get A Job, Get A Car, Get A Bed, Get Drunk! Underground Punk In The UK
+      1977-81
+    </Typography>
+    <Typography variant={"h4"} sx={{ color: "white" }}>
+      Underground Punk In The UK 1977-81
+    </Typography>
+
+    <Typography variant={"p"} sx={{ color: "white" }}>
+      Soul Jazz Records’ new 10th anniversary edition of their long-out-of-print
+      Punk 45: No Such Thing As Society. This is a one-off limited-edition
+      heavyweight special-edition coloured vinyl pressing only + download code
+      This new edition is fully remastered, repackaged and includes five new
+      tracks from ...
+    </Typography>
+  </CardContent>
+</Stack>
+```
+
+Inside the Stack component, we arrange the card content vertically. We also add spacing of 2px between each.
+
+Next up, the Container component.
+
+```jsx
+<Container>
+  <CardActionArea sx={{ backgroundColor: "#222222" }}>
+    <Grid container direction={"row"} spacing={7}>
+      <Grid item lg={6}>
+        <Stack direction={"column"} spacing={1}>
+          <Typography variant={"p"} sx={{ color: "white" }}>
+            New 2xLP (Colored Vinly) + Download Code <br />
+            SJRLP542C
+          </Typography>
+
+          <Typography variant={"p"} sx={{ color: "white" }}>
+            In Stock
+          </Typography>
+        </Stack>
+      </Grid>
+
+      <Grid item md={6} lg={6}>
+        <Grid container direction={"column"} alignItems={"flex-end"}>
+          <Grid item>
+            <Typography sx={{ color: "white" }}>$30.00</Typography>
+          </Grid>
+
+          <Grid item>
+            <Button size={"small"} sx={{ color: "grey" }}>
+              <FavoriteIcon />
+            </Button>
+            <Button variant={"contained"} size={"small"} sx={{ fontSize: 7 }}>
+              {" "}
+              ADD TO BAG
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
+    </Grid>
+  </CardActionArea>
+</Container>
+```
+
+Inside the Container component are a number of elements. So we need to arrange them properly. We do the following:
+
+1. Create a Grid Container whose grid items are spaced by 7px, and are horizontally arrange.
+2. Both grid items take up 6 columns of width.
+3. The first grid item nests a Stack component.
+   - The Stack component arranges two blocks of text in a row.
+4. The second grid item nests another Grid container.
+   - The nested Grid container has two Grid items.
+     - The first grid item simply has the price.
+     - The second grid item has two buttons arranged in a row.
+
+So we have built the following inside music player
+
+1. Record player
+   1. Album cover
+   2. Album details
+      1. Album description
+      2. Product details
+         1. Add to Cart
+         2. Serial Number
+         3. And so on.
+2. Playlist
+
+We round it all up with playlist below:
+
+```jsx
+<Grid item className="playlist" sx={{ overflow: "hidden" }}>
+  <Stack direction={"row"} spacing={-13}>
+    {playlist.map((image, index) => {
+      return (
+        <img
+          src={image}
+          style={{
+            height: "100%",
+            maxWidth: "150px",
+            maxHeight: "150px",
+          }}
+        />
+      );
+    })}
+  </Stack>
+</Grid>
+```
+
+We do the following here:
+
+1. Set overflow to hidden, because of the array of playlist images.
+2. We Stack our images in a row
+3. We set the spacing of the Stack to -13, so that they stack ontop of one another. This gives the view of a shelf
+4. We set a fixed height and width for each image.
+
+Conclusion:
+We have done alot of things here. But the main strategy we used here is to use Containers to group related elements together. Then to nest children inside it. We have also not shied from using custom CSS to change things around. We also use breakpoints to ensure that items stay within their borders.
